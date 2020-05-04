@@ -238,6 +238,16 @@ require(["D2Bot"], function (D2BOTAPI) {
 		$("#items-list").append($item);
 	}
 
+	function $updateSummary(itemCount) {
+		var $span = $('<span></span>').html(`the number of items : ${itemCount}`);
+		$span.addClass("color9");
+		var $h6 = $('<h6></h6>');
+		$h6.addClass("-medium");
+		$h6.html($span);
+		$('#summary').find('.comment-text').html('');
+		$('#summary').find('.comment-text').append($h6);
+	}
+
 	function buildregex(str) {
 		return str;
 	}
@@ -259,6 +269,7 @@ require(["D2Bot"], function (D2BOTAPI) {
 				if (loadMoreItem) {
 					loadMoreItem();
 				}
+				$updateSummary(itemCount);
 			});
 		}
 
@@ -563,7 +574,13 @@ require(["D2Bot"], function (D2BOTAPI) {
 			  return;
 			}
 
-			$(".selected").each(function (i, v) {
+			var $selectedItems = $(".selected");
+			if ($selectedItems.length <= 0) {
+				alert("You need to select at least one item.");
+				return;
+			}
+
+			$selectedItems.each(function (i, v) {
 				var $item = $(v);
 				var item = $item.data("itemData");
 				delete item.image;
@@ -593,6 +610,18 @@ require(["D2Bot"], function (D2BOTAPI) {
 				}
 			}
 		})
+
+		var $selectAllBtn = $(".select-all-btn");
+		$selectAllBtn.off("click");
+		$selectAllBtn.click(function () {
+			if ($selectAllBtn.html() == "Select all items") {
+				$selectAllBtn.html("Unselect all items")
+				document.querySelectorAll('#items-list>div').forEach(el => el.click())
+			} else {
+				$selectAllBtn.html("Select all items");
+				$(".selected").removeClass("selected");
+			}
+		});
 
 		$(".logout-btn").off("click");
 		$(".logout-btn").click(function () {
